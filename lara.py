@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-from config import *
 import time
 import random
 
@@ -29,26 +28,26 @@ def bright_burn(RED, GREEN, BLUE):
     sleeptime = 1        # Change speed, lower value, faster speed
     #while True:
     # Change LED status from mode
-    if RED == "a" and BLUE == "a" and GREEN == "a":
+    if RED <= 20 and BLUE <= 20 and GREEN <= 20:
         print ("TURNING ON ALL COLORS")
         hc595_shift(0xff)
         tune()
-    elif RED == "a" and BLUE == "a" and GREEN != "a":
+    elif RED <= 20 and BLUE <=20 and GREEN > 20:
         print ("TURNING ON REDS AND BLUES")
         hc595_shift(REDS[0] + BLUES[0])
-    elif RED == "a" and BLUE != "a" and GREEN == "a":
+    elif RED <= 20 and BLUE > 20 and GREEN <= 20:
         print ("TURNING ON REDS AND GREENS")
         hc595_shift(REDS[0] + GREENS[0])
-    elif RED != "a" and BLUE == "a" and GREEN == "a":
+    elif RED > 20 and BLUE <= 20 and GREEN <= 20:
         print ("TURNING ON BLUES AND GREENS")
         hc595_shift(BLUES[0] + GREENS[0])
-    elif RED == "a":
+    elif RED <= 20:
         print ("TURNING ON ALL REDS")
         hc595_shift(REDS[0])
-    elif GREEN == "a":
+    elif GREEN <= 20:
         print ("TURNING ON ALL GREENS")
         hc595_shift(GREENS[0])
-    elif BLUE == "a":
+    elif BLUE <= 20:
         print ("TURNING ON ALL BLUES")
         hc595_shift(BLUES[0])
     else:
@@ -236,13 +235,13 @@ def tune():
         
         #bright_burn(RED, GREEN, BLUE)
     
-def destroy():
-    Buzz.stop()
-    GPIO.output(BuzzerPin, 0)
-    GPIO.cleanup()
+#def destroy():
+ #   Buzz.stop()
+  #  GPIO.output(BuzzerPin, 0)
+  #  GPIO.cleanup()
 
-try:
-    setup()
-    #main()
-except KeyboardInterrupt:     # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
-        destroy()
+#try:
+ #   setup()
+ #   main()
+#except KeyboardInterrupt:     # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
+ #       destroy()
