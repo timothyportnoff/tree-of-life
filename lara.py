@@ -1,58 +1,19 @@
-#!/usr/bin/env python
-
-#================================================
-#
-#   This program is for SunFounder SuperKit for Rpi.
-#
-#   Extend use of 8 LED with 74HC595.
-#
-#   Change the  WhichLeds and sleeptime value under
-#   loop() function to change LED mode and speed.
-#
-#=================================================
-
 import RPi.GPIO as GPIO
+from config import *
 import time
+import random
 
 SDI   = 16
 RCLK  = 20
 SRCLK = 21
+BuzzerPin = 4
 
-#===============   LED Mode Defne ================
-#   You can define yourself, in binay, and convert it to Hex 
-#   8 bits a group, 0 means off, 1 means on
-#   like : 0101 0101, means LED1, 3, 5, 7 are on.(from left to right)
-#   and convert to 0x55.
-
-LED0 = [0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80]    #original mode
-BLINK = [0xff,0x00,0xff,0x00,0xff,0x00]         #blink
-LED1 = [0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff]    #blink mode 1
-LED2 = [0x01,0x05,0x15,0x55,0xb5,0xf5,0xfb,0xff]    #blink mode 2
-LED3 = [0x02,0x03,0x0b,0x0f,0x2f,0x3f,0xbf,0xff]    #blink mode 3
-#=================================================
-
-def print_message():
-    print ("========================================")
-    print ("|           LEDs with 74HC595          |")
-    print ("|    ------------------------------    |")
-    print ("|         SDI connect to GPIO 0        |")
-    print ("|         RCLK connect to GPIO 1       |")
-    print ("|        SRCLK connect to GPIO 2       |")
-    print ("|                                      |")
-    print ("|       Control LEDs with 74HC595      |")
-    print ("|                                      |")
-    print ("|                            SunFounder|")
-    print ("========================================\n")
-    print ("Program is running...")
-    print ("Please press Ctrl+C to end the program...")
-    raw_input = ("Press Enter to begin\n")
-
-def setup():
+def setupLED():
     GPIO.setmode(GPIO.BCM)    # Number GPIOs by its BCM location
     GPIO.setup(SDI, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(RCLK, GPIO.OUT, initial=GPIO.LOW)
     GPIO.setup(SRCLK, GPIO.OUT, initial=GPIO.LOW)
-
+    
 # Shift the data to 74HC595
 def hc595_shift(dat):
     for bit in range(0, 8): 
@@ -63,55 +24,225 @@ def hc595_shift(dat):
     GPIO.output(RCLK, GPIO.HIGH)
     time.sleep(0.001)
     GPIO.output(RCLK, GPIO.LOW)
-
-REDS = [0x09]
-GREENS = [0x24]
-BLUES = [0x12]
-
-def megaman():
-    print_message()
-    mode = LED0 # Change Mode, modes from LED0 to LED3
+    
+def bright_burn(RED, GREEN, BLUE):
     sleeptime = 1        # Change speed, lower value, faster speed
-    blink_sleeptime = 3
-    RED = 0
-    GREEN = 0
-    BLUE = 0
-    while True:
-        # Change LED status from mode
-        RED = 1
-        if RED:
-            print ("TURNING ON ALL REDS")
-            hc595_shift(REDS[0])
-            RED = 0
-            GREEN = 1
-            time.sleep(sleeptime)
-        if GREEN:
-            print ("TURNING ON ALL GREENS")
-            hc595_shift(GREENS[0])
-            GREEN = 0
-            BLUE = 1
-            time.sleep(sleeptime)
-        if BLUE:
-            print ("TURNING ON ALL BLUES")
-            hc595_shift(BLUES[0])
-            BLUE = 1
-            GREEN = 1
-            time.sleep(sleeptime)
-        if RED and BLUE and GREEN:
-            print ("TURNING ON ALL COLORS")
-            hc595_shift(0xff)
-            time.sleep(sleeptime)
-            RED = 0
-            BLUE = 0
-            GREEN = 0
-            #buzzer stuff
+    #while True:
+    # Change LED status from mode
+    if RED == "a" and BLUE == "a" and GREEN == "a":
+        print ("TURNING ON ALL COLORS")
+        hc595_shift(0xff)
+        tune()
+    elif RED == "a" and BLUE == "a" and GREEN != "a":
+        print ("TURNING ON REDS AND BLUES")
+        hc595_shift(REDS[0] + BLUES[0])
+    elif RED == "a" and BLUE != "a" and GREEN == "a":
+        print ("TURNING ON REDS AND GREENS")
+        hc595_shift(REDS[0] + GREENS[0])
+    elif RED != "a" and BLUE == "a" and GREEN == "a":
+        print ("TURNING ON BLUES AND GREENS")
+        hc595_shift(BLUES[0] + GREENS[0])
+    elif RED == "a":
+        print ("TURNING ON ALL REDS")
+        hc595_shift(REDS[0])
+    elif GREEN == "a":
+        print ("TURNING ON ALL GREENS")
+        hc595_shift(GREENS[0])
+    elif BLUE == "a":
+        print ("TURNING ON ALL BLUES")
+        hc595_shift(BLUES[0])
+    else:
+        print ("TURNING OFF ALL COLORS")
+        hc595_shift(0x00)
+    time.sleep(sleeptime)
+        
+REDS = [0x09]
+GREENS = [0x12]
+BLUES = [0x24]
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(BuzzerPin, GPIO.OUT) 
+GPIO.setwarnings(False)
+
+global Buzz 
+Buzz = GPIO.PWM(BuzzerPin, 440) 
+Buzz.start(50) 
+
+P=1
+C3=131
+CS3=139
+D3=147
+DS3=156
+E3=165
+F3=175
+FS3=185
+G3=196
+GS3=208
+A3=220
+AS3=233
+B3=247
+C4=262
+CS4=277
+D4=294
+DS4=311
+E4=330
+F4=349
+FS4=370
+G4=392
+GS4=415
+A4=440
+AS4=466
+B4=494
+C5=523
+CS5=554
+D5=587
+DS5=622
+E5=659
+F5=698
+FS5=740
+G5=784
+GS5=831
+A5=880
+AS5=932
+B5=988
+
+song = [
+    P,
+    
+    D3, F3, A3,
+    D3, F3, A3,
+    D4, P, D4,
+    A4, P, A4,
+    E4, F4, E4,
+    
+    D4, F3, A3,
+    D3, A4, C5,
+    D5, C5,
+    A4, B4, G4,
+    A4, F3, A3,
+    D3, F3, D5,
+    
+    D5, D5,
+    C5, A4,
+    A4, G4, F4,
+    E4, E3, G3,
+    C3, E3, G3,
+    D4, A4,
+    
+    G4, F4,
+    E4, D4, C4,
+    D4,
+    D4
+    ]
+
+song2 = [
+    P,
+    
+    E4,
+    G4, A4,
+    B4, C5, B4,
+    A4, FS4,
+    D4, E4, FS4,
+    G4, E4,
+    E4, DS4, E4,
+    FS4, DS4,
+    
+    B3, E4,
+    G4, A4,
+    B4, C5, B4,
+    A4, FS4,
+    D4, E4, FS4,
+    G4, FS4, E4,
+    DS4, CS4, DS4,
+    E4, E4
+    ]
+
+beat = [
+    1,
+    1, 1, 1,
+    1, 1, 1,
+    2, 0.01, 1,
+    2, 0.01, 1,
+    1.5, 0.5, 1,
+    
+    1, 1, 1,
+    1, 1, 1,
+    2, 1,
+    1, 1, 1,
+    1, 1, 1,
+    1, 1, 1,
+    
+    2, 1,
+    2, 1,
+    1, 1, 1,
+    1, 1, 1,
+    1, 1, 1,
+    2, 1,
+    
+    2, 1,
+    1, 1, 1,
+    3,
+    3
+    ]
+
+beat2 = [
+    1,
+    1,
+    2, 1,
+    1.5, 0.5, 1,
+    2, 1,
+    1.5, 0.5, 1,
+    2, 1,
+    1.5, 0.5, 1,
+    2, 1,
+    
+    2, 1,
+    2, 1,
+    1.5, 0.5, 1,
+    2, 1,
+    1.5, 0.5, 1,
+    1.5, 0.5, 1,
+    1.5, 0.5, 1,
+    2, 1,
+    ]
+
+def tune():
+    theme = random.randint(1, 10)
+    #print (theme) #debug
+    if theme <= 5:
+        for i in range(1, len(song)):
+            Buzz.ChangeFrequency(song[i])
+            time.sleep(beat[i]*0.38)
+            Buzz.stop()
+            time.sleep(0.01)
+            Buzz.start(50)
+        Buzz.stop()
+    if theme >= 6:
+        for i in range(1, len(song2)):
+            Buzz.ChangeFrequency(song2[i])
+            time.sleep(beat2[i]*0.38)
+            Buzz.stop()
+            time.sleep(0.01)
+            Buzz.start(50)
+        Buzz.stop()
+
+#def main():
+    #Buzz.stop()
+    #while True:
+        #print("These colors represent each sonar sensor. Please configure colors:\n")
+        #RED = input("RED: ")
+        #GREEN = input("\nGREEN: ")
+        #BLUE = input("\nBLUE: ")
+        
+        #bright_burn(RED, GREEN, BLUE)
+    
 def destroy():
+    Buzz.stop()
+    GPIO.output(BuzzerPin, 0)
     GPIO.cleanup()
 
-if __name__ == '__main__':
+try:
     setup()
-    try:
-        megaman()
-    except KeyboardInterrupt:
+    #main()
+except KeyboardInterrupt:     # When 'Ctrl+C' is pressed, the child program destroy() will be  executed.
         destroy()
