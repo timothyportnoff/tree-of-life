@@ -12,7 +12,7 @@ POTENTIOMMETER      = 0
 START_BUTTON        = 0 
 STOP_BUTTON         = 0
 KNOB                = 0
-IR                  = 25
+IR                  = 0
 
 #OUTPUTS
 GPIO_TRIGGER_1      = 23
@@ -23,6 +23,7 @@ MOTOR_A_1           = 12
 MOTOR_A_2           = 20
 MOTOR_B_1           = 16
 MOTOR_B_2           = 21
+RELAY_IN_1          = 18
 
 #LED'S
 RED                 = 0
@@ -44,6 +45,7 @@ GPIO.setup(GPIO_ECHO_2,GPIO.IN)      # Echo
 
 def setup():
     # Set pin states
+    GPIO.setup(RELAY_IN_1, GPIO.OUT)
     GPIO.setup(MOTOR_A_1, GPIO.OUT)
     GPIO.setup(MOTOR_A_2, GPIO.OUT)
     GPIO.setup(MOTOR_B_1, GPIO.OUT)
