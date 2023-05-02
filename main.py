@@ -27,40 +27,36 @@ try:
             distance1 = sonar_1()#measure_average(GPIO_TRIGGER_1, GPIO_ECHO_1) #check distance
             distance2 = sonar_2()#measure_average(GPIO_TRIGGER_2, GPIO_ECHO_2) #check distance
             distance3 = sonar_3()#measure_average(GPIO_TRIGGER_3, GPIO_ECHO_3) #check distance
-            if distance1 < 20: RED = 1
-            else: RED = 0
-            if distance1 < 20: BLUE = 1
-            else: BLUE = 0
-            if distance1 < 20: GREEN = 1
-            else: GREEN = 0
+            if distance1 < 20: RED = 0
+            else: RED = 1
+            if distance1 < 20: BLUE = 0
+            else: BLUE = 1
+            if distance1 < 20: GREEN = 0
+            else: GREEN = 1
 
             # Change LED status from mode
             if RED:
-                print ("TURNING ON ALL REDS")
-                hc595_shift(REDS[0])
+                hc595_shift(REDS[0]) #print ("TURNING ON ALL REDS")
                 RED = 0
                 GREEN = 1
                 time.sleep(sleeptime)
             if GREEN:
-                print ("TURNING ON ALL GREENS")
-                hc595_shift(GREENS[0])
+                hc595_shift(GREENS[0]) #print ("TURNING ON ALL GREENS")
                 GREEN = 0
                 BLUE = 1
                 time.sleep(sleeptime)
             if BLUE:
-                print ("TURNING ON ALL BLUES")
-                hc595_shift(BLUES[0])
+                hc595_shift(BLUES[0]) #print ("TURNING ON ALL BLUES")
                 BLUE = 1
                 GREEN = 1
                 time.sleep(sleeptime)
             if RED and BLUE and GREEN:
-                print ("TURNING ON ALL COLORS")
-                hc595_shift(0xff)
+                hc595_shift(0xff) #print ("TURNING ON ALL COLORS")
                 time.sleep(sleeptime)
                 RED = 0
                 BLUE = 0
                 GREEN = 0
-                STARFINGER()
+                STARFINGER() #Rotate motor
             sleep(0.1) #Sleep at the end of the loop. This is a magic number, please adjust.
             #End loop
 
