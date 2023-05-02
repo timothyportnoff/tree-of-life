@@ -12,7 +12,7 @@ from lara import *
 i = 0
 try:
     if __name__ == "__main__":
-        mode = LED0 # Change Mode, modes from LED0 to LED3
+        #mode = LED0 # Change Mode, modes from LED0 to LED3
         sleeptime = 1        # Change speed, lower value, faster speed
         blink_sleeptime = 3
         RED = 0
